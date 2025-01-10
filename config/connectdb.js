@@ -10,7 +10,7 @@ const connectToMongoDB = async () => {
 
   try {
     await mongoose.connect(uri, {
-      dbName: "your_database_name", // Optional: Specify your database name
+      dbName: "network", // Optional: Specify your database name
     });
     console.log("Connected to MongoDB!");
   } catch (error) {
