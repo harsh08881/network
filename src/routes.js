@@ -17,10 +17,6 @@ router.get('/getbalance', walletController.getWalletBalance);
 
 
 
-
-
-
-
 router.get('*' , (req,res) => {
     res.send("Handle By *");
 })
