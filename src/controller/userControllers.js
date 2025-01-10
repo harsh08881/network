@@ -115,10 +115,27 @@ const loginUser = async (req, res) => {
     }
   };
   
-
+  const getProfileDetails = async (req, res) => {
+    try {
+      const userId = req.user.id; // Assumes authentication middleware is used to get the logged-in user ID
+  
+      // Fetch user details by user ID
+      const user = await User.findById(userId).select("-password"); // Exclude password from response
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Server Error" });
+    }
+  };
 
   module.exports = {
     generateUserName,
     registerUser,
-    loginUser
+    loginUser,
+    getProfileDetails
   };
