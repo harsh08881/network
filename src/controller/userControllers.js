@@ -69,7 +69,56 @@ const registerUser = async (req, res) => {
   }
 };
 
+const loginUser = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      // Validate input
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required." });
+      }
+  
+      // Check if user exists
+      const user = await User.findOne({ email }).select("+password");
+      if (!user) {
+        return res.status(404).json({ error: "User not found. Please register first." });
+      }
+  
+      // Compare passwords
+      const isPasswordValid = await user.comparePassword(password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: "Invalid email or password." });
+      }
+  
+      // Generate JWT token without expiration
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        process.env.JWT_SECRET || "your_jwt_secret_key"
+      );
+  
+      // Send success response
+      res.status(200).json({
+        message: "Login successful.",
+        token,
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          mobileNumber: user.mobileNumber,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+      });
+    } catch (error) {
+      console.error("Error during user login:", error);
+      res.status(500).json({ error: "An error occurred while logging in." });
+    }
+  };
+  
+
+
   module.exports = {
     generateUserName,
-    registerUser
+    registerUser,
+    loginUser
   };
