@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const generateUsernames = require('../services/userName')
+const jwt = require('jsonwebtoken');
 
 const generateUserName = (req, res) => {
     const { name, mobileNumber } = req.body;
@@ -24,11 +25,7 @@ const generateUserName = (req, res) => {
 const registerUser = async (req, res) => {
   try {
     const { username, mobileNumber, email, password, firstName, lastName } = req.body;
-
-    // Input validation
-    if (!username || !mobileNumber || !email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: "All fields are required." });
-    }
+    console.log(req.body);
 
     // Check for duplicate email or mobile number
     const existingUser = await User.findOne({
@@ -72,11 +69,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
       const { email, password } = req.body;
-  
-      // Validate input
-      if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required." });
-      }
+      console.log(req.body);
   
       // Check if user exists
       const user = await User.findOne({ email }).select("+password");
@@ -89,6 +82,8 @@ const loginUser = async (req, res) => {
       if (!isPasswordValid) {
         return res.status(401).json({ error: "Invalid email or password." });
       }
+
+      console.log(user);
   
       // Generate JWT token without expiration
       const token = jwt.sign(

@@ -3,21 +3,21 @@ const router = express.Router();
 const userController = require("./controller/userControllers");
 const walletController = require('./controller/walletController');
 const referralController = require('./controller/referralController')
-// const validateFields = require('../middleware/checkfield');
-
+const authenticateUser = require('./middleware/authMiddleware')
+const validateFields = require('./middleware/validateFields');
 
 router.get("/", (req, res) => {
-    res.send("Server is running successfully!");
+    res.send("Welcome to the Theta Network");
 });
 
 
-router.post('/generate', userController.generateUserName);
-router.post('/register', userController.registerUser);
-router.post('/login', userController.loginUser);
-router.get('/profile', userController.getProfileDetails);
+router.post('/generate',validateFields(['name', 'mobileNumber']), userController.generateUserName);
+router.post('/register',validateFields(['username', 'mobileNumber' , 'email' , 'password' , 'firstName', 'lastName']), userController.registerUser);
+router.post('/login',validateFields([ 'email', 'password']), userController.loginUser);
+router.get('/profile', authenticateUser, userController.getProfileDetails);
 
 
-router.get('/getbalance', walletController.getWalletBalance);
+router.get('/getbalance',authenticateUser, walletController.getWalletBalance);
 
 
 
@@ -26,11 +26,8 @@ router.get('/referrallist', referralController.getReferralDetails);
 
 
 router.get('*' , (req,res) => {
-    res.send("Handle By *");
+    res.send("Route Not Found");
 })
-
-
-
 
 
 module.exports = router;
