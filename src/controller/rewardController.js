@@ -36,3 +36,29 @@ const startReward = async (req, res) => {
       return res.status(500).json({ message: "An error occurred while starting the reward." });
     }
   };
+
+  // API to fetch current reward for a user
+const getRewardStatus = async (req, res) => {
+    try {
+      const userId = req.params.userId; // Assume `userId` is sent as a URL parameter
+      const reward = await Reward.findOne({ user: userId });
+  
+      if (!reward) {
+        return res.status(404).json({ message: "No reward data found for this user." });
+      }
+  
+      return res.status(200).json({
+        rewardAmount: reward.rewardAmount,
+        isRewardActive: reward.isRewardActive,
+        rewardStartTime: reward.rewardStartTime,
+      });
+    } catch (error) {
+      console.error("Error fetching reward status:", error);
+      return res.status(500).json({ message: "An error occurred while fetching the reward status." });
+    }
+  };
+
+module.exports ={
+    startReward,
+    getRewardStatus
+}
