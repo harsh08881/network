@@ -4,7 +4,7 @@ const ReferralToken = require("../models/referralToken");
 const generateReferralToken = async (req, res) => {
   try {
     const userId = req.user.id;
-
+    
     // Check if a referral token already exists for the user
     const existingToken = await ReferralToken.findOne({ user: userId });
     if (existingToken) {

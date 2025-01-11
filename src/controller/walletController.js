@@ -5,8 +5,8 @@ const User = require("../models/user");
 // Get Wallet Balance
 const getWalletBalance = async (req, res) => {
   try {
-    const userId = req.user.id; // Assumes you are using a middleware to get the logged-in user ID
-    // Find the wallet by user ID
+    const userId = req.user.id; 
+    
     const wallet = await Wallet.findOne({ user: userId });
 
     if (!wallet) {

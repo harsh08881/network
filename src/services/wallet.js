@@ -12,6 +12,7 @@ const generateWallet = async (userId) => {
   return wallet;
 };
 
+
 /**
  * Get wallet details for a user.
  */

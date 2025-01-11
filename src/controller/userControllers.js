@@ -22,52 +22,61 @@ const generateUserName = (req, res) => {
     }
   };
 
-
-const registerUser = async (req, res) => {
-  try {
-    const { username, mobileNumber, email, password, firstName, lastName } = req.body;
-    console.log(req.body);
-
-    // Check for duplicate email or mobile number
-    const existingUser = await User.findOne({
-      $or: [{ email: email.toLowerCase() }, { mobileNumber }],
-    });
-    if (existingUser) {
-      return res.status(400).json({ error: "Email or mobile number already in use." });
+  const registerUser = async (req, res) => {
+    try {
+      const { username, mobileNumber, email, password, firstName, lastName, referralCode } = req.body;
+  
+      // Check for duplicate email or mobile number
+      const existingUser = await User.findOne({
+        $or: [{ email: email.toLowerCase() }, { mobileNumber }],
+      });
+      if (existingUser) {
+        return res.status(400).json({ error: "Email or mobile number already in use." });
+      }
+  
+      // Create a new user
+      const newUser = new User({
+        username,
+        mobileNumber,
+        email: email.toLowerCase(),
+        password,
+        firstName,
+        lastName,
+      });
+  
+      // Save the user to the database
+      await newUser.save();
+  
+      // Process referral if referralCode exists
+      if (referralCode) {
+        try {
+          await referralService.processReferral(newUser, referralCode);
+        } catch (error) {
+          return res.status(400).json({ message: error.message });
+        }
+      }
+  
+      // Generate a wallet for the new user
+      await generateWallet(newUser._id);
+  
+      // Send a success response
+      res.status(201).json({
+        message: "User registered successfully.",
+        user: {
+          id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+          mobileNumber: newUser.mobileNumber,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+        },
+      });
+    } catch (error) {
+      console.error("Error during user registration:", error);
+      res.status(500).json({ error: "An error occurred while registering the user." });
     }
-
-    // Create a new user
-    const newUser = new User({
-      username,
-      mobileNumber,
-      email: email.toLowerCase(),
-      password,
-      firstName,
-      lastName,
-    });
-
-    // Save the user to the database
-    await newUser.save();
-     // Generate a wallet for the new user
-    await generateWallet(newUser._id);
-
-    // Send a success response
-    res.status(201).json({
-      message: "User registered successfully.",
-      user: {
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        mobileNumber: newUser.mobileNumber,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-      },
-    });
-  } catch (error) {
-    console.error("Error during user registration:", error);
-    res.status(500).json({ error: "An error occurred while registering the user." });
-  }
-};
+  };
+  
 
 const loginUser = async (req, res) => {
     try {

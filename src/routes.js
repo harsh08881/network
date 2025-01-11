@@ -21,8 +21,7 @@ router.get('/profile', authenticateUser, userController.getProfileDetails);
 router.get('/getbalance',authenticateUser, walletController.getWalletBalance);
 
 
-router.get('/referrallist', referralController.getReferralDetails);
-
+router.get('/referrallist',authenticateUser, referralController.getReferralDetails);
 
 
 router.get('/referralToken',authenticateUser, referralTokenController.getReferralToken);
