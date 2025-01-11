@@ -3,7 +3,7 @@ const ReferralToken = require("../models/referralToken");
 
 const generateReferralToken = async (req, res) => {
   try {
-    const { userId } = req.body; // Assume userId is sent in the request
+    const userId = req.user.id;
 
     // Check if a referral token already exists for the user
     const existingToken = await ReferralToken.findOne({ user: userId });
@@ -12,7 +12,7 @@ const generateReferralToken = async (req, res) => {
     }
 
     // Generate a unique token
-    const token = crypto.randomBytes(16).toString("hex");
+    const token = crypto.randomBytes(4).toString("hex");
 
     // Create and save the referral token
     const referralToken = new ReferralToken({
@@ -36,7 +36,7 @@ const generateReferralToken = async (req, res) => {
 
 const getReferralToken = async (req, res) => {
     try {
-      const { userId } = req.params; // Assume userId is sent as a parameter
+      const userId = req.user.id;
   
       const referralToken = await ReferralToken.findOne({ user: userId });
   

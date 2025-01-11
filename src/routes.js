@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("./controller/userControllers");
 const walletController = require('./controller/walletController');
 const referralController = require('./controller/referralController')
+const referralTokenController = require('./controller/referralTokenController');
 const authenticateUser = require('./middleware/authMiddleware')
 const validateFields = require('./middleware/validateFields');
 
@@ -21,6 +22,11 @@ router.get('/getbalance',authenticateUser, walletController.getWalletBalance);
 
 
 router.get('/referrallist', referralController.getReferralDetails);
+
+
+
+router.get('/referralToken',authenticateUser, referralTokenController.getReferralToken);
+router.get('/generateToken', authenticateUser, referralTokenController.generateReferralToken);
 
 
 
