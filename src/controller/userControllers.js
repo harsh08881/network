@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const generateUsernames = require('../services/userName')
 const { generateWallet } = require("../services/wallet");
+const referralService = require('../services/referralService');
 const jwt = require('jsonwebtoken');
 
 const generateUserName = (req, res) => {
@@ -25,6 +26,7 @@ const generateUserName = (req, res) => {
   const registerUser = async (req, res) => {
     try {
       const { username, mobileNumber, email, password, firstName, lastName, referralCode } = req.body;
+      console.log(req.body);
   
       // Check for duplicate email or mobile number
       const existingUser = await User.findOne({

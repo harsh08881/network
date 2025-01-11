@@ -18,7 +18,7 @@ router.post('/login',validateFields([ 'email', 'password']), userController.logi
 router.get('/profile', authenticateUser, userController.getProfileDetails);
 
 
-router.get('/getbalance',authenticateUser, walletController.getWalletBalance);
+router.get('/getbalance',authenticateUser, walletController.getWalletBalance); 
 
 
 router.get('/referrallist',authenticateUser, referralController.getReferralDetails);
