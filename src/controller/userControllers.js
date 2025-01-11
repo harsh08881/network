@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const generateUsernames = require('../services/userName')
+const { generateWallet } = require("../services/wallet");
 const jwt = require('jsonwebtoken');
 
 const generateUserName = (req, res) => {
@@ -47,6 +48,8 @@ const registerUser = async (req, res) => {
 
     // Save the user to the database
     await newUser.save();
+     // Generate a wallet for the new user
+    await generateWallet(newUser._id);
 
     // Send a success response
     res.status(201).json({

@@ -20,7 +20,6 @@ router.get('/profile', authenticateUser, userController.getProfileDetails);
 router.get('/getbalance',authenticateUser, walletController.getWalletBalance);
 
 
-
 router.get('/referrallist', referralController.getReferralDetails);
 
 
@@ -28,6 +27,11 @@ router.get('/referrallist', referralController.getReferralDetails);
 router.get('*' , (req,res) => {
     res.send("Route Not Found");
 })
+router.post('*' , (req,res) => {
+    res.send("Route Not Found");
+})
+
+
 
 
 module.exports = router;
