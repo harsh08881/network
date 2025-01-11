@@ -6,6 +6,7 @@ const errorHandler = require('./src/middleware/errorhandler')
 const connectDB = require('./config/connectdb')
 const app = express();
 const PORT = process.env.PORT || 5020;
+require("./src/cron/referralAmount");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(errorHandler);

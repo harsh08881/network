@@ -1,69 +1,43 @@
 const Wallet = require("../models/wallet");
 
-/**
- * Generate a wallet for a user.
- */
-const generateWallet = async (userId) => {
-  const existingWallet = await Wallet.findOne({ user: userId });
-  if (existingWallet) throw new Error("Wallet already exists for this user.");
+const updateWallet = async (userId, amount, transactionType, description = "") => {
+  try {
+    // Find the wallet for the user
+    let wallet = await Wallet.findOne({ user: userId });
 
-  const wallet = new Wallet({ user: userId });
-  await wallet.save();
-  return wallet;
-};
+    // Create a wallet if it doesn't exist
+    if (!wallet) {
+      wallet = new Wallet({ user: userId });
+    }
 
+    // Update the wallet balance
+    if (transactionType === "credit") {
+      wallet.balance += amount;
+    } else if (transactionType === "debit") {
+      if (wallet.balance < amount) {
+        throw new Error("Insufficient balance");
+      }
+      wallet.balance -= amount;
+    } else {
+      throw new Error("Invalid transaction type");
+    }
 
-/**
- * Get wallet details for a user.
- */
-const getWallet = async (userId) => {
-  const wallet = await Wallet.findOne({ user: userId }).populate("user");
-  if (!wallet) throw new Error("Wallet not found for this user.");
+    // Add the transaction to the transactions array
+    wallet.transactions.push({
+      transactionType,
+      amount,
+      description,
+    });
 
-  return wallet;
-};
-
-/**
- * Add balance to the wallet.
- */
-const addBalance = async (userId, amount, description = "Balance added") => {
-  const wallet = await Wallet.findOne({ user: userId });
-  if (!wallet) throw new Error("Wallet not found for this user.");
-
-  wallet.balance += amount;
-  wallet.transactions.push({
-    transactionType: "credit",
-    amount,
-    description,
-  });
-
-  await wallet.save();
-  return wallet;
-};
-
-/**
- * Deduct balance from the wallet.
- */
-const deductBalance = async (userId, amount, description = "Balance deducted") => {
-  const wallet = await Wallet.findOne({ user: userId });
-  if (!wallet) throw new Error("Wallet not found for this user.");
-
-  if (wallet.balance < amount) throw new Error("Insufficient balance.");
-
-  wallet.balance -= amount;
-  wallet.transactions.push({
-    transactionType: "debit",
-    amount,
-    description,
-  });
-
-  await wallet.save();
-  return wallet;
+    // Save the wallet
+    await wallet.save();
+    return wallet;
+  } catch (error) {
+    console.error("Error updating wallet:", error);
+    throw error;
+  }
 };
 
 module.exports = {
-  generateWallet,
-  getWallet,
-  addBalance,
-  deductBalance,
+  updateWallet,
 };

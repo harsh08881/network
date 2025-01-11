@@ -48,6 +48,8 @@ const generateUserName = (req, res) => {
   
       // Save the user to the database
       await newUser.save();
+      // Generate a wallet for the new user
+      await generateWallet(newUser._id);
   
       // Process referral if referralCode exists
       if (referralCode) {
@@ -58,8 +60,7 @@ const generateUserName = (req, res) => {
         }
       }
   
-      // Generate a wallet for the new user
-      await generateWallet(newUser._id);
+      
   
       // Send a success response
       res.status(201).json({
