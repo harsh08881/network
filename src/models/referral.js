@@ -17,7 +17,7 @@ const referralSchema = new mongoose.Schema(
     },
     rewardEarned: {
       type: Number,
-      default: 0, // Tracks reward earned for the referral
+      default: 0, 
     },
     isRewardClaimed: {
       type: Boolean,
